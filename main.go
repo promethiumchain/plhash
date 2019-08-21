@@ -19,11 +19,13 @@ var indexesList [][]int
 func main() {
 
 	bc := NewBlockchain()
-	i := GetFuncIndexes(bc.blocks[len(bc.blocks)].PrevBlockHash)
+	i := []int{1, 2, 3, 4, 5}
 	PrintFunctions(i)
 	indexesList = append(indexesList, i)
+	i = GetFuncIndexes(bc.blocks[len(bc.blocks)-1].PrevBlockHash)
+	indexesList = append(indexesList, i)
 	bc.AddBlock("Send 1 Promethium to HexDev", i)
-	i = GetFuncIndexes(bc.blocks[len(bc.blocks)].PrevBlockHash)
+	i = GetFuncIndexes(bc.blocks[len(bc.blocks)-1].PrevBlockHash)
 	indexesList = append(indexesList, i)
 	bc.AddBlock("Send 2 Promethium to DSV", i)
 
