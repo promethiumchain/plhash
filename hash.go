@@ -14,7 +14,7 @@ import (
 )
 
 var mathFuncs *MathFuncs
-var targetBits uint64 = 4
+var targetBits uint64 = 8
 
 // init is called once on startup and creates a new list of math funcs
 func init() {

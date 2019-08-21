@@ -86,15 +86,15 @@ func TestMathFuncs(t *testing.T) {
 func TestPow(t *testing.T) {
 
 	bc := NewBlockchain()
-	bc.AddBlock("Send 1 Promethium to HexDev")
-	bc.AddBlock("Send 2 Promethium to DSV")
+	bc.AddBlock("Send 1 Promethium to HexDev", []int{1, 2, 3, 4, 5})
+	bc.AddBlock("Send 2 Promethium to DSV", []int{1, 2, 3, 4, 5})
 
 	for _, block := range bc.blocks {
 		fmt.Printf("Prev. hash: %x\n", block.PrevBlockHash)
 		fmt.Printf("Data: %s\n", block.Data)
 		fmt.Printf("Hash: %x\n", block.Hash)
 		pow := NewProofOfWork(block)
-		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
+		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate(block.PrevBlockHash, []int{1, 2, 3, 4, 5})))
 		fmt.Println()
 	}
 }
