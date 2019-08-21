@@ -14,11 +14,12 @@ import (
 )
 
 var mathFuncs *MathFuncs
-var targetBits uint64 = 24
+var targetBits uint64 = 8 // 8 is min
 
-// Init is called once on startup and creates a new list of math funcs
-func Init() {
+// init is called once on startup and creates a new list of math funcs
+func init() {
 	mathFuncs = NewFuncList()
+	PrintMessage("math functions list initialized with length : ", len(mathFuncs.FuncList))
 }
 
 // Hash32 takes a hash type and returns the byte slice of the hash
@@ -101,12 +102,9 @@ func HashPassE(data []byte, index int) (*big.Int, error) {
 // calcPass takes a hash and passes it via the math funcs, returns a big int
 func calcPass(in []byte, index int) (*big.Int, error) {
 	bn := ByteToBigInt(in)
-	// fmt.Println("this is the byte to bigInt : ", bn)
 	fx := BigIntToBigFloat(bn, BaselinePrecisionDigits)
-	// fmt.Println("CALCPASS -> this the big float conversion of the number : ", fx)
 	fnc := mathFuncs.FuncList[index]
 	fn := fnc(fx)
-	// fmt.Println("CALCPASS -> this is the outcome via the math func : ", fn)
 	fs, err := RemoveDecFromFloat(fn)
 	if err != nil {
 		return nil, err
@@ -136,32 +134,32 @@ func CalcFinalHash(a, b, c, d, e *big.Int) *big.Int {
 }
 
 // CompletePass represents all the pass in serial plus the final hash arithmetic function
-func CompletePass(data []byte) (*big.Int, error) {
-	passA, errA := HashPassA(data, 1)
+func CompletePass(i []int, data, lastblockhash []byte) (*big.Int, error) {
+	passA, errA := HashPassA(data, i[0])
 	if errA != nil {
 		fmt.Println(errA)
 		return nil, errA
 	}
 
-	passB, errB := HashPassB(data, 2)
+	passB, errB := HashPassB(data, i[1])
 	if errB != nil {
 		fmt.Println(errB)
 		return nil, errB
 	}
 
-	passC, errC := HashPassC(data, 3)
+	passC, errC := HashPassC(data, i[2])
 	if errC != nil {
 		fmt.Println(errC)
 		return nil, errC
 	}
 
-	passD, errD := HashPassD(data, 4)
+	passD, errD := HashPassD(data, i[3])
 	if errD != nil {
 		fmt.Println(errD)
 		return nil, errD
 	}
 
-	passE, errE := HashPassE(data, 5)
+	passE, errE := HashPassE(data, i[4])
 	if errE != nil {
 		fmt.Println(errE)
 		return nil, errE

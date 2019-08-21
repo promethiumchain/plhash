@@ -7,7 +7,6 @@ import (
 )
 
 func TestHash(t *testing.T) {
-	Init()
 	// indexes, _ := GetFuncIndexes([]byte("0x43b60820064b41e64491136cc333ca5862e855eb03bdbcd67a6f70ce4478b100"))
 	data := []byte("This is the genesis example")
 	// h32 := sha3.New256()
@@ -54,7 +53,6 @@ func TestHash(t *testing.T) {
 }
 
 func TestMathFuncs(t *testing.T) {
-	Init()
 	data := []byte("This is the genesis example")
 
 	passA, errA := HashPassA(data, 1)
@@ -86,7 +84,6 @@ func TestMathFuncs(t *testing.T) {
 }
 
 func TestPow(t *testing.T) {
-	Init()
 
 	bc := NewBlockchain()
 	bc.AddBlock("Send 1 Promethium to HexDev")

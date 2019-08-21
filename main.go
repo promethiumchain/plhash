@@ -10,19 +10,29 @@ import (
 	"time"
 )
 
+var (
+	maxNonce = math.MaxInt64
+)
+
+var indexesList [][]int
+
 func main() {
-	Init()
 
 	bc := NewBlockchain()
-	bc.AddBlock("Send 1 Promethium to HexDev")
-	bc.AddBlock("Send 2 Promethium to DSV")
+	i := GetFuncIndexes(bc.blocks[len(bc.blocks)].PrevBlockHash)
+	PrintFunctions(i)
+	indexesList = append(indexesList, i)
+	bc.AddBlock("Send 1 Promethium to HexDev", i)
+	i = GetFuncIndexes(bc.blocks[len(bc.blocks)].PrevBlockHash)
+	indexesList = append(indexesList, i)
+	bc.AddBlock("Send 2 Promethium to DSV", i)
 
-	for _, block := range bc.blocks {
+	for i, block := range bc.blocks {
 		fmt.Printf("Prev. hash: %x\n", block.PrevBlockHash)
 		fmt.Printf("Data: %s\n", block.Data)
 		fmt.Printf("Hash: %x\n", block.Hash)
 		pow := NewProofOfWork(block)
-		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
+		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate(block.PrevBlockHash, indexesList[i])))
 		fmt.Println()
 	}
 }
@@ -37,11 +47,11 @@ type Block struct {
 }
 
 // NewBlock creates and returns Block
-func NewBlock(data string, prevBlockHash []byte) *Block {
+func NewBlock(data string, prevBlockHash []byte, indexes []int) *Block {
 	block := &Block{time.Now().Unix(), []byte(data), prevBlockHash, []byte{}, 0}
 
 	pow := NewProofOfWork(block)
-	nonce, hash := pow.Run()
+	nonce, hash := pow.Run(prevBlockHash, indexes)
 	block.Hash = hash[:]
 	block.Nonce = nonce
 
@@ -50,7 +60,7 @@ func NewBlock(data string, prevBlockHash []byte) *Block {
 
 // NewGenesisBlock creates and returns genesis Block
 func NewGenesisBlock() *Block {
-	return NewBlock("Genesis Block", []byte{})
+	return NewBlock("Genesis Block", []byte{}, []int{1, 2, 3, 4, 5})
 }
 
 // Blockchain keeps a sequence of Blocks
@@ -59,9 +69,9 @@ type Blockchain struct {
 }
 
 // AddBlock saves provided data as a block in the blockchain
-func (bc *Blockchain) AddBlock(data string) {
+func (bc *Blockchain) AddBlock(data string, indexes []int) {
 	prevBlock := bc.blocks[len(bc.blocks)-1]
-	newBlock := NewBlock(data, prevBlock.Hash)
+	newBlock := NewBlock(data, prevBlock.Hash, indexes)
 	bc.blocks = append(bc.blocks, newBlock)
 }
 
@@ -69,10 +79,6 @@ func (bc *Blockchain) AddBlock(data string) {
 func NewBlockchain() *Blockchain {
 	return &Blockchain{[]*Block{NewGenesisBlock()}}
 }
-
-var (
-	maxNonce = math.MaxInt64
-)
 
 // ProofOfWork represents a proof-of-work
 type ProofOfWork struct {
@@ -106,7 +112,7 @@ func (pow *ProofOfWork) prepareData(nonce int) []byte {
 }
 
 // Run performs a proof-of-work
-func (pow *ProofOfWork) Run() (int, []byte) {
+func (pow *ProofOfWork) Run(prevBlockHash []byte, indexes []int) (int, []byte) {
 	var hashInt big.Int
 	var hash [64]byte
 
@@ -115,17 +121,15 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 	fmt.Printf("Mining the block containing \"%s\"\n", pow.block.Data)
 	for nonce < maxNonce {
 		data := pow.prepareData(nonce)
-
-		// hash = sha256.Sum256(data)
-		// hash = chainHasher64(data, pow.block.PrevBlockHash)
-		fmt.Printf("\r%x", hash)
-		// hashInt.SetBytes(hash[:])
-		hi, err := CompletePass(data)
+		hi, err := CompletePass(indexes, data, prevBlockHash)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		hashInt.Set(hi)
+		hash, _ = BytesTo64Bytes(hi.Bytes())
+		fmt.Printf("\r%x", hash)
+
+		hashInt.SetBytes(hash[:])
 		if hashInt.Cmp(pow.target) == -1 {
 			break
 		} else {
@@ -138,19 +142,19 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 }
 
 // Validate validates block's PoW
-func (pow *ProofOfWork) Validate() bool {
+func (pow *ProofOfWork) Validate(prevBlockHash []byte, indexes []int) bool {
 	var hashInt big.Int
 
 	data := pow.prepareData(pow.block.Nonce)
 	// hash := sha256.Sum256(data)
 	// hash := chainHasher64(data, pow.block.PrevBlockHash)
 	// hashInt.SetBytes(hash[:])
-	hi, err := CompletePass(data)
+	hi, err := CompletePass(indexes, data, prevBlockHash)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	hashInt.Set(hi)
+	hashInt.SetBytes(hi.Bytes())
 	isValid := hashInt.Cmp(pow.target) == -1
 
 	return isValid

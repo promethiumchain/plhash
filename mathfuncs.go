@@ -51,14 +51,14 @@ func createMathList() []func(*big.Float) *big.Float {
 
 // GetFuncIndexes retuns the indexes for the math funcs chosen
 func GetFuncIndexes(lastBlockHash []byte) []int {
-	if len(lastBlockHash) == 0 {
-		return []int{1, 2, 3, 4, 5}
-	}
 	var funcIndexes = make([]int, 5)
 	a := big.NewInt(0)
 	a.SetBytes(lastBlockHash)
 	// Trim ending zeros
 	s := a.String()
+	if s == "0" {
+		return []int{1, 2, 3, 4, 5}
+	}
 	st := strings.TrimRight(s, "0")
 	sm := st[len(st)-10:]
 	// Seperate values and store them

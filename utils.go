@@ -112,9 +112,23 @@ func SelectLastDigits(in *big.Int, depth uint64) (*big.Int, error) {
 	}
 	fs := strings.TrimRight(s, "0")
 	index := int(depth)
-	// fmt.Println(index, fs)
 	fx := fs[len(fs)-index:]
-	a.SetString(fx, 0)
-
+	a.SetString(fx, 10)
 	return a, nil
+}
+
+// PrintMessage prints a message between spaces and artifacts
+func PrintMessage(args ...interface{}) {
+	fmt.Println()
+	fmt.Println("---------------------------------------------------------------")
+	fmt.Println(args...)
+	fmt.Println("---------------------------------------------------------------")
+	fmt.Println()
+}
+
+// PrintFunctions prints the functions selected by name
+func PrintFunctions(indexes []int) {
+	for i := range indexes {
+		PrintMessage("function selected for pass : ", GetFunctionName(mathFuncs.FuncList[i]))
+	}
 }
