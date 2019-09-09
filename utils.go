@@ -73,17 +73,13 @@ func BytesTo64Bytes(in []byte) ([64]byte, error) {
 
 // RemoveDecFromFloat returns a big.Int from a input float after the deciminal removal
 func RemoveDecFromFloat(in *big.Float) (*big.Int, error) {
-	// fmt.Println("REMOVEDECFROMFLOAT -> this is the incoming float", in)
 	s := fmt.Sprintf("%.128f", in)
-	// fmt.Println("REMOVEDECFROMFLOAT -> this is the string", s)
 	if len(s) == 0 {
 		return nil, fmt.Errorf("%s", "string has 0 zero length")
 	}
 	x := strings.Replace(s, ".", "", -1)
-	// fmt.Println("REMOVEDECFROMFLOAT -> this is the string result : ", x)
 	a := big.NewInt(0)
 	a.SetString(x, 0)
-	// fmt.Println("REMOVEDECFROMFLOAT -> this is the final big int : ", a)
 	return a, nil
 }
 

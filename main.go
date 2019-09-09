@@ -20,10 +20,11 @@ func main() {
 
 	bc := NewBlockchain()
 	i := []int{1, 2, 3, 4, 5}
-	PrintFunctions(i)
+
 	indexesList = append(indexesList, i)
 	i = GetFuncIndexes(bc.blocks[len(bc.blocks)-1].PrevBlockHash)
 	indexesList = append(indexesList, i)
+
 	bc.AddBlock("Send 1 Promethium to HexDev", i)
 	i = GetFuncIndexes(bc.blocks[len(bc.blocks)-1].PrevBlockHash)
 	indexesList = append(indexesList, i)
@@ -148,9 +149,6 @@ func (pow *ProofOfWork) Validate(prevBlockHash []byte, indexes []int) bool {
 	var hashInt big.Int
 
 	data := pow.prepareData(pow.block.Nonce)
-	// hash := sha256.Sum256(data)
-	// hash := chainHasher64(data, pow.block.PrevBlockHash)
-	// hashInt.SetBytes(hash[:])
 	hi, err := CompletePass(indexes, data, prevBlockHash)
 	if err != nil {
 		fmt.Println(err)

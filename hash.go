@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"hash"
 	"math/big"
-	"strconv"
-	"strings"
 
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
@@ -14,7 +12,8 @@ import (
 )
 
 var mathFuncs *MathFuncs
-var targetBits uint64 = 8
+var targetBits uint64 = 2
+var baselinePrecisionDigits uint = 128
 
 // init is called once on startup and creates a new list of math funcs
 func init() {
@@ -102,7 +101,7 @@ func HashPassE(data []byte, index int) (*big.Int, error) {
 // calcPass takes a hash and passes it via the math funcs, returns a big int
 func calcPass(in []byte, index int) (*big.Int, error) {
 	bn := ByteToBigInt(in)
-	fx := BigIntToBigFloat(bn, BaselinePrecisionDigits)
+	fx := BigIntToBigFloat(bn, baselinePrecisionDigits)
 	fnc := mathFuncs.FuncList[index]
 	fn := fnc(fx)
 	fs, err := RemoveDecFromFloat(fn)
@@ -166,18 +165,4 @@ func CompletePass(i []int, data, lastblockhash []byte) (*big.Int, error) {
 	}
 	finalHash := CalcFinalHash(passA, passB, passC, passD, passE)
 	return finalHash, nil
-}
-
-// ConstractDiffString constracts a new diff string
-func ConstractDiffString(difflevel int) string {
-	var diffString string
-	var data []string
-	for i := 1; i < difflevel+1; i++ {
-		e := i % 10
-		d := strconv.Itoa(e)
-
-		data = append(data, d)
-	}
-	diffString = strings.Join(data, "")
-	return diffString
 }

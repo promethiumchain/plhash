@@ -2,6 +2,8 @@ package main
 
 import "math/big"
 
+var currentPrecision uint = 128
+
 // Pow represents the pow function
 func Pow(a *big.Float, e uint) *big.Float {
 	e = uint(e)
@@ -64,7 +66,7 @@ func Pow12(in *big.Float) *big.Float {
 
 // Root represets root(x, n)
 func Root(a *big.Float, n uint64) *big.Float {
-	limit := Pow(NewBigFloat(2), CurrentPrecision)
+	limit := Pow(NewBigFloat(2), currentPrecision)
 	n1 := n - 1
 	n1f, rn := NewBigFloat(float64(n1)), Div(NewBigFloat(1.0), NewBigFloat(float64(n)))
 	x, x0 := NewBigFloat(1.0), ZeroBigFloat()
@@ -143,7 +145,7 @@ func Abs(a *big.Float) *big.Float {
 // NewBigFloat returns a new big float with current global precision
 func NewBigFloat(f float64) *big.Float {
 	r := big.NewFloat(f)
-	r.SetPrec(CurrentPrecision)
+	r.SetPrec(currentPrecision)
 	return r
 }
 
@@ -155,7 +157,7 @@ func Div(a, b *big.Float) *big.Float {
 // ZeroBigFloat returns a big float with zero value
 func ZeroBigFloat() *big.Float {
 	r := big.NewFloat(0.0)
-	r.SetPrec(CurrentPrecision)
+	r.SetPrec(currentPrecision)
 	return r
 }
 

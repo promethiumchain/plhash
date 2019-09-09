@@ -157,6 +157,7 @@ func GetFuncIndexes(lastBlockHash []byte) []int {
 	funcIndexes[2] = sm3
 	funcIndexes[3] = sm4
 	funcIndexes[4] = sm5
+	PrintFunctions(funcIndexes)
 	return funcIndexes
 }
 

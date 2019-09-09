@@ -7,15 +7,7 @@ import (
 )
 
 func TestHash(t *testing.T) {
-	// indexes, _ := GetFuncIndexes([]byte("0x43b60820064b41e64491136cc333ca5862e855eb03bdbcd67a6f70ce4478b100"))
 	data := []byte("This is the genesis example")
-	// h32 := sha3.New256()
-	// out32 := Hash32(h32, data)
-	// t.Log("this is the 32 byte slice : ", out32)
-
-	// h64 := sha3.New512()
-	// out64 := Hash64(h64, data)
-	// t.Log("this is 64 byte slice : ", out64)
 
 	passA, err := HashPassA(data, 5)
 	if err != nil {
@@ -84,7 +76,6 @@ func TestMathFuncs(t *testing.T) {
 }
 
 func TestPow(t *testing.T) {
-
 	bc := NewBlockchain()
 	bc.AddBlock("Send 1 Promethium to HexDev", []int{1, 2, 3, 4, 5})
 	bc.AddBlock("Send 2 Promethium to DSV", []int{1, 2, 3, 4, 5})
@@ -97,10 +88,4 @@ func TestPow(t *testing.T) {
 		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate(block.PrevBlockHash, []int{1, 2, 3, 4, 5})))
 		fmt.Println()
 	}
-}
-
-func TestDiffString(t *testing.T) {
-	difflevel := 10
-	s := ConstractDiffString(difflevel)
-	t.Log(s)
 }
