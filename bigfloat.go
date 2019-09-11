@@ -180,8 +180,3 @@ func Sub(a, b *big.Float) *big.Float {
 func Lesser(x, y *big.Float) bool {
 	return x.Cmp(y) == -1
 }
-
-// ZeroBigInt returns a new big int with zero value
-func ZeroBigInt() *big.Int {
-	return big.NewInt(0)
-}

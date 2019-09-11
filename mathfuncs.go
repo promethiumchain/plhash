@@ -44,7 +44,6 @@ func createMathList() []func(*big.Float) *big.Float {
 	collection = append(collection, Root12)
 	collection = append(collection, Abs)
 
-	// Apend more here
 	//Dummy Append
 	collection = append(collection, Pow3)
 	collection = append(collection, Pow4)

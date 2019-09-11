@@ -20,11 +20,9 @@ func main() {
 
 	bc := NewBlockchain()
 	i := []int{1, 2, 3, 4, 5}
-
 	indexesList = append(indexesList, i)
 	i = GetFuncIndexes(bc.blocks[len(bc.blocks)-1].PrevBlockHash)
 	indexesList = append(indexesList, i)
-
 	bc.AddBlock("Send 1 Promethium to HexDev", i)
 	i = GetFuncIndexes(bc.blocks[len(bc.blocks)-1].PrevBlockHash)
 	indexesList = append(indexesList, i)
@@ -52,12 +50,10 @@ type Block struct {
 // NewBlock creates and returns Block
 func NewBlock(data string, prevBlockHash []byte, indexes []int) *Block {
 	block := &Block{time.Now().Unix(), []byte(data), prevBlockHash, []byte{}, 0}
-
 	pow := NewProofOfWork(block)
 	nonce, hash := pow.Run(prevBlockHash, indexes)
 	block.Hash = hash[:]
 	block.Nonce = nonce
-
 	return block
 }
 
@@ -93,9 +89,7 @@ type ProofOfWork struct {
 func NewProofOfWork(b *Block) *ProofOfWork {
 	target := big.NewInt(1)
 	target.Lsh(target, uint(512-targetBits))
-
 	pow := &ProofOfWork{b, target}
-
 	return pow
 }
 
@@ -110,7 +104,6 @@ func (pow *ProofOfWork) prepareData(nonce int) []byte {
 		},
 		[]byte{},
 	)
-
 	return data
 }
 
@@ -131,7 +124,6 @@ func (pow *ProofOfWork) Run(prevBlockHash []byte, indexes []int) (int, []byte) {
 		}
 		hash, _ = BytesTo64Bytes(hi.Bytes())
 		fmt.Printf("\r%x", hash)
-
 		hashInt.SetBytes(hash[:])
 		if hashInt.Cmp(pow.target) == -1 {
 			break
@@ -140,14 +132,12 @@ func (pow *ProofOfWork) Run(prevBlockHash []byte, indexes []int) (int, []byte) {
 		}
 	}
 	fmt.Print("\n\n")
-
 	return nonce, hash[:]
 }
 
 // Validate validates block's PoW
 func (pow *ProofOfWork) Validate(prevBlockHash []byte, indexes []int) bool {
 	var hashInt big.Int
-
 	data := pow.prepareData(pow.block.Nonce)
 	hi, err := CompletePass(indexes, data, prevBlockHash)
 	if err != nil {
