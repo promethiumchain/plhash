@@ -136,7 +136,7 @@ func createMathList() []func(*big.Float) *big.Float {
 // GetFuncIndexes retuns the indexes for the math funcs chosen
 func GetFuncIndexes(lastBlockHash []byte) []int {
 	var funcIndexes = make([]int, 5)
-	a := big.NewInt(0)
+	a := ZeroBigInt()
 	a.SetBytes(lastBlockHash)
 	// Trim ending zeros
 	s := a.String()
