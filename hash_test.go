@@ -1,9 +1,13 @@
 package main
 
 import (
+	"crypto/sha512"
 	"fmt"
+	"math/big"
 	"strconv"
 	"testing"
+
+	"golang.org/x/crypto/sha3"
 )
 
 func TestHash(t *testing.T) {
@@ -41,7 +45,39 @@ func TestHash(t *testing.T) {
 
 	finalHash := CalcFinalHash(passA, passB, passC, passD, passE)
 	t.Log("final hash big number : ", finalHash)
+	t.Log("final hash hex : ", toHexInt(finalHash))
+}
 
+func TestSha(t *testing.T) {
+	h1 := sha3.New512()
+	b1 := []byte("This is the genesis example")
+	fh1 := Hash64(h1, b1)
+	finalBigNumber1 := ZeroBigInt()
+	finalBigNumber1.SetBytes(fh1[:])
+	h2 := sha3.New512()
+	b2 := []byte("This is the genesis example")
+	fh2 := Hash64(h2, b2)
+	h3 := sha512.New()
+	fh3 := Hash64(h3, b2)
+	finalBigNumber3 := ZeroBigInt()
+	finalBigNumber3.SetBytes(fh3[:])
+	finalBigNumber2 := ZeroBigInt()
+	finalBigNumber2.SetBytes(fh2[:])
+	t.Log(toHexInt(finalBigNumber1))
+	t.Log(toHexInt(finalBigNumber2))
+	t.Log(finalBigNumber1)
+	t.Log(finalBigNumber2)
+	t.Log("this is the double pass : ", finalBigNumber3)
+
+	if fh1 == fh3 {
+		t.Log("data are the same")
+	} else {
+		t.Log("data dont match")
+	}
+}
+
+func toHexInt(n *big.Int) string {
+	return fmt.Sprintf("%x", n)
 }
 
 func TestMathFuncs(t *testing.T) {
