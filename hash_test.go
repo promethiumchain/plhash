@@ -82,7 +82,6 @@ func toHexInt(n *big.Int) string {
 
 func TestMathFuncs(t *testing.T) {
 	data := []byte("This is the genesis example")
-
 	passA, errA := HashPassA(data, 1)
 	if errA != nil {
 		t.Fatal(errA)
